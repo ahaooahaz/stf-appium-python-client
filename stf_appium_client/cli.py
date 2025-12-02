@@ -41,7 +41,9 @@ def main():
                         default="{}",
                         help='requirements as json string')
     parser.add_argument('--list',
-                        action='store_true',
+                        nargs='?',
+                        const='available',
+                        choices=['available', 'all'],
                         help='Only list devices as json')
     parser.add_argument('--timeout', metavar='t', type=int,
                         default=StfClient.DEFAULT_ALLOCATION_TIMEOUT_SECONDS,
@@ -72,7 +74,7 @@ def main():
     client.connect(token=args.token)
 
     if args.list:
-        print(client.list_devices(requirements=requirement))
+        print(json.dumps(client.list_devices(requirements=requirement, available_filter=(args.list != 'all'))))
         exit(0)
 
     with client.allocation_context(requirements=requirement,
